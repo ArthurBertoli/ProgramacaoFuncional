@@ -1,0 +1,81 @@
+{--Lista 2--}
+
+pertence a [] = False
+pertence a (x:xs) = if a == x then True else pertence a xs
+
+intersecao [] _ = [] 
+intersecao _ [] = []
+intersecao (x:xs) (y:ys) =  if pertence x (y:ys) then x : intersecao xs (y:ys)
+                            else intersecao xs (y:ys)
+
+inverso [] = []
+inverso (x:xs) = inverso xs ++ [x]
+
+primeiros 0 _ = []
+primeiros _ [] = [] 
+primeiros n (x:xs) = x : primeiros (n - 1) xs 
+nUltimos n (x:xs) = inverso (primeiros n (inverso (x:xs)))
+
+soma2 _ [] = []
+soma2 [] _ = []
+soma2 (x:xs) (y:ys) = (x + y) : soma2 (xs) (ys)
+
+pot 1 = 2 : [] 
+pot n = (2^n): pot (n - 1)
+pot2 n = inverso (pot n)
+pot' 1 = [2] 
+pot' n = pot' (n - 1) ++ [2^n] 
+
+intercalacao [] [] = []
+intercalacao (x:xs) [] = (x:xs)
+intercalacao [] (x:xs) = (x:xs)
+intercalacao (x:xs) (y:ys) = if (x < y) then x : intercalacao (xs) (y:ys) else y : intercalacao (x:xs) (ys) 
+
+menor [x] = x
+menor (x:xs) = if x < menor xs then x else menor xs
+
+removerElem n [] = [] 
+removerElem n (x:xs) = if (n == x) then xs else x : removerElem n (xs)
+
+ordenar [] = []
+ordenar (x:xs) = menor (x:xs) : ordenar (removerElem (menor (x:xs)) (x:xs))
+
+insereOrd _ [] = []
+insereOrd n (x:xs) = ordenar (n : ordenar (x:xs))
+
+enesimo 1 (x:xs) = x
+enesimo n (x:xs) = enesimo (n-1) xs
+
+repetir n 0 = [n]
+repetir 0 _ = []
+repetir n a = a : repetir (n -1) a
+
+removeTab [] = []
+removeTab (x:xs) = if x == '\t' then ' ' : xs else x : removeTab xs
+
+minusculo x | (ord x) <= 90 = (chr((ord x)+32)) 
+            | otherwise = x
+minusculas [] = []
+minusculas (x:xs) = minusculo x : minusculas xs
+
+inversoDupla [] = []
+inversoDupla ((a,b):xs) = (b,a) : inversoDupla (xs)
+
+simetrico [] = []
+simetrico ((a,b):xs) = if a == b then True : simetrico (xs) else False : simetrico (xs)
+
+numString n = show n 
+
+stringNum :: String -> Int
+stringNum s = read s
+
+decBin 0 = [0]
+decBin 1 = [1]
+decBin n = decBin ( n `div` 2 ) ++ [n `rem` 2]
+
+binDec [] = 0
+binDec (x:xs) = (2 ^ (length xs)) * binDec xs
+
+trocoCafe' _ [] = []
+trocoCafe' n (x:xs) = if (div n x) > 0 then (x,(div n x)) : trocoCafe' (rem n x) xs else trocoCafe' n (xs) 
+trocoCafe n m = trocoCafe' (m - n) [50,20,10,5]

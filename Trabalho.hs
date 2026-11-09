@@ -1,55 +1,38 @@
-import Data.Char
 import System.IO
 import Data.List
 
-main :: IO ()
-main = do
-    -- Abre um arquivo!
-    h <- openFile "teste.txt" ReadMode
-    -- Pega o conteúdo do arquivo!
-    conteudo <- hGetContents h
-    -- Imprime o resultado!
-    putStrLn (final(shorten(almalgamate(sortLs(inverte(allNumWords(numLines(lines(tirasimbolos conteudo)))))))))
-    
-    -- Fecha o arquivo!
-    hClose h
-
-numLines [] = []
-numLines (x:xs) = zip [1..] (x:xs)
-
-allNumWords xs = foldr (\(n,s) -> (++) (separa_palavras n (words s))) [] xs
+type Doc = String 
+type Linha = String 
+type Palavra = String 
 
 
-sortLs [] = []
-sortLs xs = sort xs
 
+main = do putStr "Arquivo: "
+	  hFlush stdout
+   	  a <- getLine
+	  txt <- readFile a
+	  putStr txt
+          let construirIndice = (eliminaRep(agrupar(ordenar(numeraPalavras (numlinhas (lines txt))))))
+	  putStr("\n"++ show construirIndice++"\n")
 
-almalgamate [] = []
-almalgamate (x:xs) = ((verifica (fst x) (x:xs)),fst x):almalgamate xs
+nl n [] = [] 
+nl n (x:xs) = (n,x): nl (n + 1) xs 
+numlinhas (ls) = nl 1 ls 
 
-
-shorten [] = []
-shorten (x:xs) = x:shorten (verifica' (snd x) xs)
-
--- Auxiliares
-
-separa_palavras _ [] = []
-separa_palavras n (x:xs) = (n,x):separa_palavras n xs
+numeraPalavras [] = []
+numeraPalavras ((a,b):xs) = map ((,)a) (words b) ++ numeraPalavras xs 
 
 inverte [] = []
-inverte ((n,x):xs) = (x,n):inverte xs
+inverte ((a,b): xs) = (b,a) : inverte xs   
+ordenar (ls) = (inverte(sort(inverte (ls))))
 
-verifica _ [] = []
-verifica x ((a,b):xs) = if x == a then b:verifica x xs else verifica x xs
+primeiro (m,b) p = m : p   
+igualb  p (a,b) = p == b
+agrupar [] = []  
+agrupar ((a,b): xs) = (a : (foldr primeiro [] (filter (igualb b) xs)), b): agrupar ((filter (not.(igualb b)) xs))   
 
-verifica' _ [] = []
-verifica' x ((a,b):xs) = if x == b then verifica' x xs else (a,b):verifica' x xs
+auxR [] = []
+auxR (x:xs) = x : auxR (filter (/= x) xs)
+eliminaRep [] = []
+eliminaRep ((a,b): xs) = ((auxR a), b) : eliminaRep xs  
 
-tirasimbolos [] = []
-tirasimbolos (x:xs)
-                   |isSpace x == True = x:tirasimbolos xs
-                   |isLetter x == False = tirasimbolos xs
-                   |otherwise = x:tirasimbolos xs
-
-final [] = []
-final ((a,b):xs) = (b ++ ": " ++ (show a)) ++ "\n" ++ final xs
